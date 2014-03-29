@@ -1,19 +1,37 @@
+#include <stdlib.h>
 #include <Python.h>
 
 #include <QApplication>
-#include <QPushButton>
+#include <QTextEdit>
+#include <QDir>
+#include <QString>
 
 int main(int argc, char *argv[]) {
-  Py_SetProgramName(argv[0]);
-  Py_Initialize();
-
   QApplication app (argc, argv);
 
-  PyRun_SimpleString("from time import time,ctime\n"
-                   "print 'Today is',ctime(time())\n");
+  QDir bundleDir (app.applicationDirPath());
+  bundleDir.cdUp();
+  bundleDir.cdUp();
+  
+  QDir resourceDir (bundleDir);
+  resourceDir.cd("Contents");
+  resourceDir.cd("Resources");
 
-  QPushButton button ("Hello world !");
-  button.show();
+  QDir pythonRoot (resourceDir);
+  pythonRoot.cd("Python-2.7.6");
+
+  QDir pythonLib (pythonRoot);
+  pythonLib.cd("Lib");
+
+  QString pathEnv ("PYTHONPATH=");
+  pathEnv += pythonLib.absolutePath();
+
+  putenv(pathEnv.toLocal8Bit().data());
+
+  Py_SetPythonHome(pythonRoot.absolutePath().toLocal8Bit().data());
+  Py_Initialize();
+
+
 
   app.exec();
   Py_Finalize();

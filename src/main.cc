@@ -23,17 +23,21 @@ int main(int argc, char *argv[]) {
   QDir pythonLib (pythonRoot);
   pythonLib.cd("Lib");
 
-  QString pathEnv ("PYTHONPATH=");
-  pathEnv += pythonLib.absolutePath();
+  QString libPathEnv ("PYTHONPATH=");
+  libPathEnv += pythonLib.absolutePath();
 
-  putenv(pathEnv.toLocal8Bit().data());
+  putenv(libPathEnv.toLocal8Bit().data());
 
   Py_SetPythonHome(pythonRoot.absolutePath().toLocal8Bit().data());
   Py_Initialize();
 
+  QString script = "from PyQt4 import QtGui, QtCore;import sys;";
+  script += "sys.path.append('" + libPathEnv + "');";
+  script += "app = QtGui.QApplication([]);hello = QtGui.QPushButton(\"Hello World!\", None);hello.show();app.exec_();";
+
+  PyRun_SimpleString(script.toLocal8Bit().data());
 
 
-  app.exec();
   Py_Finalize();
 
   return 0;

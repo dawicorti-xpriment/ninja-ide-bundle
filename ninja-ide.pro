@@ -13,6 +13,8 @@ PYTHON_FILES.path = Contents/Resources
 
 QMAKE_BUNDLE_DATA += PYTHON_FILES NINJA_IDE_FILES
 
+ICON = icon.icns
+
 # Input
 SOURCES += src/main.cc
 
